@@ -2,3 +2,9 @@ site_name: My Docs
 site_url: https://megantron512.github.io/dfir-training-workbook/
 theme:
   name: material
+
+nav:
+  - Overview: index.md
+  - AWS:
+    - Lab 1: aws/lab1.md
+    
