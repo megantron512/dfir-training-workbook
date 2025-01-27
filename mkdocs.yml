@@ -5,8 +5,7 @@ theme:
 
 nav:
   - Overview: index.md
-  - AWS:
-    - Lab 1: aws/lab1.md
+  - Lab 1: aws/lab1.md
 
 markdown_extensions:
   - admonition
