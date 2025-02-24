@@ -2,10 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://megantron512.github.io/dfir-training-workbook/</loc>
-         <lastmod>2025-01-27</lastmod>
+         <lastmod>2025-02-24</lastmod>
     </url>
     <url>
          <loc>https://megantron512.github.io/dfir-training-workbook/aws/lab1/</loc>
-         <lastmod>2025-01-27</lastmod>
+         <lastmod>2025-02-24</lastmod>
+    </url>
+    <url>
+         <loc>https://megantron512.github.io/dfir-training-workbook/gcp/service_account_abuse/</loc>
+         <lastmod>2025-02-24</lastmod>
     </url>
 </urlset>

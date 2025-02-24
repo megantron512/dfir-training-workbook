@@ -8,13 +8,11 @@
       
       
       
-        <link rel="canonical" href="https://megantron512.github.io/dfir-training-workbook/aws/lab1/">
+        <link rel="canonical" href="https://megantron512.github.io/dfir-training-workbook/gcp/service_account_abuse/">
       
       
-        <link rel="prev" href="../..">
+        <link rel="prev" href="../../aws/lab1/">
       
-      
-        <link rel="next" href="../../gcp/service_account_abuse/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +20,7 @@
     
     
       
-        <title>Lab 1: Basic AWS Attack Technique Investigation - My Docs</title>
+        <title>Default Service Account Abuse in Google Cloud - My Docs</title>
       
     
     
@@ -64,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#lab-1-basic-aws-attack-technique-investigation" class="md-skip">
+        <a href="#default-service-account-abuse-in-google-cloud" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Lab 1: Basic AWS Attack Technique Investigation
+              Default Service Account Abuse in Google Cloud
             
           </span>
         </div>
@@ -210,19 +208,17 @@
       
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -236,10 +232,75 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Aws
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../aws/lab1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 1: Basic AWS Attack Technique Investigation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Gcp
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Gcp
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -263,7 +324,7 @@
           
   
   <span class="md-ellipsis">
-    Lab 1: Basic AWS Attack Technique Investigation
+    Default Service Account Abuse in Google Cloud
   </span>
   
 
@@ -274,7 +335,7 @@
         
   
   <span class="md-ellipsis">
-    Lab 1: Basic AWS Attack Technique Investigation
+    Default Service Account Abuse in Google Cloud
   </span>
   
 
@@ -296,11 +357,26 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    <span class="md-ellipsis">
+      Background
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#logs" class="md-nav__link">
     <span class="md-ellipsis">
       Logs
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -317,69 +393,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Gcp
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            Gcp
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../gcp/service_account_abuse/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Default Service Account Abuse in Google Cloud
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -419,11 +432,26 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    <span class="md-ellipsis">
+      Background
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#logs" class="md-nav__link">
     <span class="md-ellipsis">
       Logs
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -451,25 +479,117 @@
                   
 
 
-<h1 id="lab-1-basic-aws-attack-technique-investigation">Lab 1: Basic AWS Attack Technique Investigation</h1>
-<p>This is the first lab. </p>
-<h2 id="logs">Logs</h2>
+<h1 id="default-service-account-abuse-in-google-cloud">Default Service Account Abuse in Google Cloud</h1>
+<h2 id="background">Background</h2>
+<p>SIRT has received a <a href="https://app.datadoghq.com/security?query=%40workflow.rule.type%3A%28%22Log%20Detection%22%20OR%20%22Signal%20Correlation%22%29%20source%3Agcp&amp;agg_m=count&amp;agg_m_source=base&amp;agg_t=count&amp;column=time&amp;event=AwAAAZU4_Ad1_vpBkQAAABhBWlU0X0FkMUFBQURFUTUyRDlVaFR3QUEAAAAkMDE5NTM4ZmQtZjVmMC00ODRmLWEzMjktMGZmNDU3ZDIxMmY3AAAFUg&amp;fromUser=false&amp;order=desc&amp;product=siem&amp;start=1740331935795&amp;end=1740418335795&amp;paused=false">Google Cloud Instance Creation via gcloud signal</a> that has been determined to be suspicious/malicious. Investigate the signal and determine how the threat actor accessed the environment and what they did with their access.</p>
+<h3 id="logs">Logs</h3>
 <p>The logs for this lab fall within the following time frame: <code>&lt;tbd&gt;</code>.
 We can use the following filter to focus on the CloudTrail logs in the relevant AWS account:
-<code>index:cloudtrail</code> </p>
+<code>source:gcp* project_id:datadog-dfir-training-2025</code> </p>
+<p>Don't forget that there are some logs that don't make it to Datadog that might be worth exploring within Google Cloud Console.</p>
 <h2 id="investigation">Investigation</h2>
-<p>An attacker did a bad thing. Let's investigate.</p>
+<p>Start by reviewing the signal and identifying noteworthy properties that might act as pivot points to discover related activity. </p>
 <details class="question">
-<summary>Who is the bad guy?</summary>
+<summary>What indicators can help us track the relevant activity?</summary>
 <details class="tip">
 <summary>Hint</summary>
-<p>Look here for help</p>
+<p>Take note of the following properties:   </p>
+<ul>
+<li>IP address  </li>
+<li>User ID   </li>
+<li>Entities (related resources)  </li>
+</ul>
 </details>
 <details class="info">
 <summary>Answer</summary>
-<p>The bad guy is me. </p>
+<ul>
+<li>IP address: <code>1.1.1.1</code></li>
+<li>User ID: <code>research-512-serivce-account@datadog-dfir-training-2025.iam.gserviceaccount.com</code></li>
+<li>Related resources:   <ul>
+<li>GCE INSTANCE 1</li>
+<li>GCE INSTANCE 2</li>
+<li>GCE INSTANCE 3</li>
+</ul>
+</li>
+</ul>
 </details>
 </details>
+<p>A good starting point is to understand the nature of the activity is to identify what the service account was used for.</p>
+<details class="question">
+<summary>What actions did the service account associated with the signal take?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the event names associated with activity where the user ID is <code>research-512-serivce-account@datadog-dfir-training-2025.iam.gserviceaccount.com</code>. You can either do this with grouping by fields in Log Explorer or using Investigator against the service account. </p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>There are 6 different event types associated with this account:   </p>
+<ul>
+<li><code>v1 compute.instances.insert</code> </li>
+<li><code>iam.serviceAccounts.actAs</code></li>
+<li><code>v1.compute.instances.get</code></li>
+<li><code>v1.compute.projects.get</code></li>
+<li><code>v1.compute.zoneOperations.wait</code>  </li>
+<li><code>v1.compute.zones.get</code> </li>
+</ul>
+</details>
+</details>
+<p>Most of the associated events are read-only activity, so let's focus on the first event type: <code>v1 compute.instances.insert</code>. This indicates attempts to deploy virtual machines on Google Cloud Compute.</p>
+<details class="question">
+<summary>How many virtual machines were deployed and hat are their instance names/IDs?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Further filter the search for the project and service account using <code>@evt.name:v1 compute.instances.insert</code>. Look at <code>@data.protoPayload.resourceName</code> and <code>@data.resource.labels.instance_id</code> for the resource names and instance IDs.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<ul>
+<li><code>instance-1</code> (ID <insert ID>)</li>
+<li><code>instance-2</code> (ID <insert ID>)</li>
+<li><code>instance-3</code> (ID <insert ID>)</li>
+</ul>
+</details>
+</details>
+<p>The logs don't provide full context. Let's look directly in Google Cloud at the virtual machines to see if there is anything interesting about the hosts that might point to attacker intent.</p>
+<details class="question">
+<summary>What interesting instance details could point to attacker intent?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the <code>Machine configuration</code> and <code>Custom metadata</code>.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>There's two key details of interest here:  </p>
+<ol>
+<li>The host has GPUs attached. Attackers often create GPU-enabled VMs for the purpose of cryptomining.</li>
+<li>There is a <code>startup-script</code> key with a bash script that downloads a file from a remote host and executes it.</li>
+</ol>
+</details>
+</details>
+<p>Now we've determined that the threat actor's intention was likely to leverage our compute infrastructure for cryptomining or another malicious activity, we should work backwards to determine how this service account was compromised in the first place. </p>
+<details class="question">
+<summary>How did the threat actor authenticate the service account?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at <code>@data.protoPayload.authenticationInfo</code> in any of the logs associated with the account's activity.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The authenticationInfo field shows that there is an associated <code>serviceAccountKeyName</code>, indicating a key exists for the service account and was used to authenticate the user of the account.</p>
+</details>
+</details>
+<details class="question">
+<summary>What is the scope of access that this account has?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Use Policy Analyzed in Google Cloud to understand the service account's permissions. </p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The service account has an Editor role grant on the project <code>Datadog Dfir Training 2025</code>.</p>
+</details>
+</details>
+<p>It appears the threat actor has gotten a copy of a service account key in order to leverage the account's editor permissions to carry out their attack. Now we need to determine how the threat actor obtained access to the key. </p>
 
 
 
