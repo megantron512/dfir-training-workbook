@@ -22,7 +22,7 @@
     
     
       
-        <title>Lab 1: Basic AWS Attack Technique Investigation - My Docs</title>
+        <title>Lab 1: AWS Authentication at Datadog - My Docs</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#lab-1-basic-aws-attack-technique-investigation" class="md-skip">
+        <a href="#lab-1-aws-authentication-at-datadog" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Lab 1: Basic AWS Attack Technique Investigation
+              Lab 1: AWS Authentication at Datadog
             
           </span>
         </div>
@@ -263,7 +263,7 @@
           
   
   <span class="md-ellipsis">
-    Lab 1: Basic AWS Attack Technique Investigation
+    Lab 1: AWS Authentication at Datadog
   </span>
   
 
@@ -274,7 +274,7 @@
         
   
   <span class="md-ellipsis">
-    Lab 1: Basic AWS Attack Technique Investigation
+    Lab 1: AWS Authentication at Datadog
   </span>
   
 
@@ -296,18 +296,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#logs" class="md-nav__link">
+  <a href="#goal" class="md-nav__link">
     <span class="md-ellipsis">
-      Logs
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#investigation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Investigation
+      Goal
     </span>
   </a>
   
@@ -419,18 +410,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#logs" class="md-nav__link">
+  <a href="#goal" class="md-nav__link">
     <span class="md-ellipsis">
-      Logs
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#investigation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Investigation
+      Goal
     </span>
   </a>
   
@@ -451,25 +433,12 @@
                   
 
 
-<h1 id="lab-1-basic-aws-attack-technique-investigation">Lab 1: Basic AWS Attack Technique Investigation</h1>
-<p>This is the first lab. </p>
-<h2 id="logs">Logs</h2>
-<p>The logs for this lab fall within the following time frame: <code>&lt;tbd&gt;</code>.
-We can use the following filter to focus on the CloudTrail logs in the relevant AWS account:
-<code>index:cloudtrail</code> </p>
-<h2 id="investigation">Investigation</h2>
-<p>An attacker did a bad thing. Let's investigate.</p>
-<details class="question">
-<summary>Who is the bad guy?</summary>
-<details class="tip">
-<summary>Hint</summary>
-<p>Look here for help</p>
-</details>
-<details class="info">
-<summary>Answer</summary>
-<p>The bad guy is me. </p>
-</details>
-</details>
+<h1 id="lab-1-aws-authentication-at-datadog">Lab 1: AWS Authentication at Datadog</h1>
+<p>This lab is to begin understanding what authentication looks like in the logs when users accesss AWS using SSO. </p>
+<p>Before walking through the questions below, navigate to the <a href="https://d-906757b57c.awsapps.com/start/#/?tab=accounts">AWS access portal</a> and search for the <code>datadog-dfir-training-2025</code> account. Access it using the <code>security-admin</code> role. Within a few minutes, associated logs should be generated and shipped to the Datadog.</p>
+<h2 id="goal">Goal</h2>
+<p>The primary goal of this lab is to identify all event types that are generated when a Datadog user signs in with SSO. The upcoming slides in the training will go into detail about these events, but see what you can find yourself before we cover any gaps! </p>
+<p>If you think you've identified all relevant log entries, as a bonus challenge, identify other types of authentication that are occuring and notable properties associated with those events that could assist in investigating malicious activity. </p>
 
 
 
