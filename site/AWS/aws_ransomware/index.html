@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://megantron512.github.io/dfir-training-workbook/aws/lab1/">
+        <link rel="canonical" href="https://megantron512.github.io/dfir-training-workbook/aws/aws_ransomware/">
       
       
-        <link rel="prev" href="../aws_ransomware/">
+        <link rel="prev" href="../..">
       
       
-        <link rel="next" href="../../gcp/service_account_abuse/">
+        <link rel="next" href="../lab1/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Lab 1: AWS Authentication at Datadog - My Docs</title>
+        <title>Ransomware in AWS - My Docs</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#lab-1-aws-authentication-at-datadog" class="md-skip">
+        <a href="#ransomware-in-aws" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Lab 1: AWS Authentication at Datadog
+              Ransomware in AWS
             
           </span>
         </div>
@@ -247,27 +247,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../aws_ransomware/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Ransomware in AWS
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -284,7 +263,7 @@
           
   
   <span class="md-ellipsis">
-    Lab 1: AWS Authentication at Datadog
+    Ransomware in AWS
   </span>
   
 
@@ -295,7 +274,7 @@
         
   
   <span class="md-ellipsis">
-    Lab 1: AWS Authentication at Datadog
+    Ransomware in AWS
   </span>
   
 
@@ -317,9 +296,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#goal" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
-      Goal
+      Background
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#investigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Investigation
     </span>
   </a>
   
@@ -329,6 +332,27 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 1: AWS Authentication at Datadog
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -431,9 +455,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#goal" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
-      Goal
+      Background
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#investigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Investigation
     </span>
   </a>
   
@@ -454,12 +502,93 @@
                   
 
 
-<h1 id="lab-1-aws-authentication-at-datadog">Lab 1: AWS Authentication at Datadog</h1>
-<p>This lab is to begin understanding what authentication looks like in the logs when users accesss AWS using SSO. </p>
-<p>Before walking through the questions below, navigate to the <a href="https://d-906757b57c.awsapps.com/start/#/?tab=accounts">AWS access portal</a> and search for the <code>datadog-dfir-training-2025</code> account. Access it using the <code>security-admin</code> role. Within a few minutes, associated logs should be generated and shipped to the Datadog.</p>
-<h2 id="goal">Goal</h2>
-<p>The primary goal of this lab is to identify all event types that are generated when a Datadog user signs in with SSO. The upcoming slides in the training will go into detail about these events, but see what you can find yourself before we cover any gaps! </p>
-<p>If you think you've identified all relevant log entries, as a bonus challenge, identify other types of authentication that are occuring and notable properties associated with those events that could assist in investigating malicious activity. </p>
+<h1 id="ransomware-in-aws">Ransomware in AWS</h1>
+<h2 id="background">Background</h2>
+<p>SIRT has received an alert about an <a href="https://github.com/DataDog/threat-detection/blob/main/rules/cloudtrail/aws_resource_encryption_ransomware.tf">external KMS key being used to encrypt resources</a>. For the sake of this lab, no signal was generated, but if it had been, it would have been triggered by <a href="https://app.datadoghq.com/logs?query=%40eventID%3A06d89b2c-cf2c-326f-aa8d-d80ba0dc8802&amp;agg_m=count&amp;agg_m_source=base&amp;agg_t=count&amp;clustering_pattern_field_path=message&amp;cols=host%2Cservice%2C%40evt.name%2C%40requestParameters.bucketName%2C%40userIdentity.accessKeyId&amp;event=AwAAAZWGathAgTavzAAAABhBWldHYkVTX0FBQVlhc0tkY0RDbGhnRFAAAAAkMDE5NTg2NmMtOTk3OC00ZDZiLWFjMzgtMmUwN2Q2YjAzNGRmAAHYoA&amp;fromUser=true&amp;messageDisplay=inline&amp;refresh_mode=sliding&amp;storage=flex_tier&amp;stream_sort=desc&amp;viz=stream&amp;from_ts=1741716026101&amp;to_ts=1741716926101&amp;live=true">this GenerateDataKey event</a>.    </p>
+<h3 id="logs">Logs</h3>
+<p>The logs for this lab fall within the following time frame: <code>&lt;tbd&gt;</code>.
+We can use the following filter to focus on the CloudTrail logs in the relevant AWS account:
+<code>source:cloudtrail account:711387092967</code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since the sandbox infrastructure was used for lab development, if you do not limit your searches to account ID <code>711387092967</code>, "attacker" activity will appear in the results. Feel free to look at the events to get familiar with different event types, but in the case of a similar incident, these events will not appear as they will be logged in attacker infrastructure.</p>
+</div>
+<h2 id="investigation">Investigation</h2>
+<p>Start by reviewing the triggering event and understanding what is happening. </p>
+<details class="question">
+<summary>What is the attacker doing based on this event?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<ul>
+<li>Search Google or generate AI to understand the <code>GenerateDataKey</code> event.  </li>
+<li>Look at <code>@requestParameters</code> for more context.</li>
+</ul>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>This event indicates an attempt to encrypt data in AWS. The request parameters provide the following context:  </p>
+<ul>
+<li>The object that was encrypted is <code>arn:aws:s3:::financial-reports-2025-23943/company_secrets.txt</code>, a file named <code>company_secrets.txt</code> in an S3 bucket called <code>financial-reports-2025-23943</code>.   </li>
+<li>It was encryted with a KMS key with ARN <code>arn:aws:kms:us-east-1:601427279990:key/aba2894d-c354-499a-b55b-329a8e776c20</code>. </li>
+</ul>
+</details>
+</details>
+<details class="question">
+<summary>What is a notable attribute of the KMS key involved in the encryption?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Review what each part of the ARN represents. Is there anything in the key's ARN that does not match with the context of this event?</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The account ID shown in the ARN (<code>601427279990</code>) is from a different account than the one in which the encryption is occuring. In this particular case, due to testing infrastructure, it is another account within Datadog. The signal logic and what would likely be observed in an attack though is a key outside of Datadog being used. </p>
+</details>
+</details>
+<p>Now that we have reviewed the triggering event, let's look at the bigger picture and find out what other activity is associated with the attacker.</p>
+<details class="question">
+<summary>What indicators can help us track the relevant activity?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Take note of the following properties:   </p>
+<ul>
+<li>@userIdentity.arn</li>
+<li>@resource.ARN</li>
+</ul>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<ul>
+<li>User ARN: <code>arn:aws:iam::711387092967:user/CloudOpsMonitor</code>    </li>
+<li>KMS Key ARN: <code>arn:aws:kms:us-east-1:601427279990:key/aba2894d-c354-499a-b55b-329a8e776c20</code></li>
+</ul>
+</details>
+</details>
+<p>Before broadening our search to all activity from the IAM user, let's first see the full scope of the encryption activities.</p>
+<details class="question">
+<summary>How many files were encrypted? Gather a list of the files.</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Filter by the KMS key ARN: <code>index:cloudtrail account:711387092967 @resources.ARN:"arn:aws:kms:us-east-1:601427279990:key/aba2894d-c354-499a-b55b-329a8e776c20"</code>. Group by <code>@requestParameters.encryptionContext.aws:s3:arn</code> for a quick view of all encrypted resources.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>10 files were encrypted, all in the <code>financial-reports-2025-23943</code> bucket. </p>
+<p><img alt="file_list" src="../images/file_list.png" /></p>
+</details>
+</details>
+<p>We've mentioned in training that not all S3 buckets provide data-level logging, so any write or read operations on the bucket will not be logged. Let's go look at the bucket in the AWS console quick and see if there is anything notable.</p>
+<details class="question">
+<summary>Besides the bad practice of storing seemingly sensitive files, is there anything notable about the files in the bucket?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the most recently modified file.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>After each file is overwritten with an encrypted version of the file (Last Modified timestamps are seconds apart), a <code>RANSOM_NOTE.txt</code> is modified or created. Viewing this file reveals a ransom note that says an AWS KMS key was used to encrypt the other files and that if payment isn't made, the encryption key will be deleted after 7 days.</p>
+</details>
+</details>
+<p>At this point, we've figured out that we were the target of a ransomware attack where an external KMS key was used to encrypt all the files in our bucket. To better understand the sequence of events that led to this, let's broaden our search to include all activity by the <code>CloudOpsMonitor</code> IAM user.</p>
 
 
 

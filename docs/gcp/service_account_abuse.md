@@ -87,4 +87,5 @@ Now we've determined that the threat actor's intention was likely to leverage ou
     ??? info "Answer"
         The service account has an Editor role grant on the project `Datadog Dfir Training 2025`.
 
-It appears the threat actor has gotten a copy of a service account key in order to leverage the account's editor permissions to carry out their attack. Now we need to determine how the threat actor obtained access to the key. 
+It appears the threat actor has gotten a copy of a service account key in order to leverage the account's editor permissions to carry out their attack. Now we need to determine how the threat actor obtained access to the key. We have the source IP of the service account activity, so let's see if there is any other anomalous activity tied to that IP address.
+
