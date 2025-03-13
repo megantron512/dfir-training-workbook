@@ -4,9 +4,7 @@
 SIRT has received an alert about an [external KMS key being used to encrypt resources](https://github.com/DataDog/threat-detection/blob/main/rules/cloudtrail/aws_resource_encryption_ransomware.tf). For the sake of this lab, no signal was generated, but if it had been, it would have been triggered by [this GenerateDataKey event](https://app.datadoghq.com/logs?query=%40eventID%3A06d89b2c-cf2c-326f-aa8d-d80ba0dc8802&agg_m=count&agg_m_source=base&agg_t=count&clustering_pattern_field_path=message&cols=host%2Cservice%2C%40evt.name%2C%40requestParameters.bucketName%2C%40userIdentity.accessKeyId&event=AwAAAZWGathAgTavzAAAABhBWldHYkVTX0FBQVlhc0tkY0RDbGhnRFAAAAAkMDE5NTg2NmMtOTk3OC00ZDZiLWFjMzgtMmUwN2Q2YjAzNGRmAAHYoA&fromUser=true&messageDisplay=inline&refresh_mode=sliding&storage=flex_tier&stream_sort=desc&viz=stream&from_ts=1741716026101&to_ts=1741716926101&live=true).    
 
 ### Logs
-The logs for this lab fall within the following time frame: `<tbd>`.
-We can use the following filter to focus on the CloudTrail logs in the relevant AWS account:
-`source:cloudtrail account:711387092967`
+The logs for this lab can be access via this link: [Ransomware in AWS Logs](https://app.datadoghq.com/logs?query=source%3Acloudtrail%20account%3A711387092967&agg_m=count&agg_m_source=base&agg_t=count&cols=host%2Cservice&fromUser=true&messageDisplay=inline&refresh_mode=paused&storage=flex_tier&stream_sort=desc&from_ts=1741716000000&to_ts=1741717800000&live=false).
 
 !!! note
     Since the sandbox infrastructure was used for lab development, if you do not limit your searches to account ID `711387092967`, "attacker" activity will appear in the results. Feel free to look at the events to get familiar with different event types, but in the case of a similar incident, these events will not appear as they will be logged in attacker infrastructure.
