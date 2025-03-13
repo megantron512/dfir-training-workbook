@@ -520,7 +520,7 @@ We can use the following filter to focus on the CloudTrail logs in the relevant 
 <details class="tip">
 <summary>Hint</summary>
 <ul>
-<li>Search Google or generate AI to understand the <code>GenerateDataKey</code> event.  </li>
+<li>Search Google or generative AI to understand the <code>GenerateDataKey</code> event.  </li>
 <li>Look at <code>@requestParameters</code> for more context.</li>
 </ul>
 </details>
@@ -589,6 +589,111 @@ We can use the following filter to focus on the CloudTrail logs in the relevant 
 </details>
 </details>
 <p>At this point, we've figured out that we were the target of a ransomware attack where an external KMS key was used to encrypt all the files in our bucket. To better understand the sequence of events that led to this, let's broaden our search to include all activity by the <code>CloudOpsMonitor</code> IAM user.</p>
+<details class="question">
+<summary>What other actions did the <code>CloudOpsMonitor</code> IAM user take?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Search based on the username <code>CloudOpsMonitor</code> and group by <code>@evt.name</code>.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>Along with the previously-investigated <code>GenerateDataKey</code> action, the IAM account was also used to perform <code>ListBuckets</code> and <code>GetBucketVersioning</code>. </p>
+</details>
+</details>
+<details class="question">
+<summary>How many times was the GetBucketVersioning action taken? How many buckets was the call made against?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Further filter the search to only include <code>@evt.name:GetBucketVersioning</code>. Count the results. Group by the bucket name to see unique count of buckets.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>There are 16 <code>GetBucketVersioning</code> events targeting 8 different buckets.</p>
+</details>
+</details>
+<details class="question">
+<summary>What AWS CLI command was caused these events to be generated?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the user agent.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The user agent ends with <code>command#s3api.get-bucket-versioning</code> indicating the command executed was <code>aws s3api get-bucket-versioning</code>. We do not know if any additional parameters were passed.</p>
+</details>
+</details>
+<details class="question">
+<summary>What AWS CLI command was caused these events to be generated?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the user agent.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The user agent ends with <code>command#s3api.get-bucket-versioning</code> indicating the command executed was <code>aws s3api get-bucket-versioning</code>. We do not know if any additional parameters were passed.</p>
+</details>
+</details>
+<details class="question">
+<summary>What information can the attacker find out from running this command? How is it relevant to the threat actor's attack?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look up the documentation for the <code>GetBucketVersioning</code> event or <code>get-bucket-versioning</code> CLI command.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>This command returns the versioning state and MFA Delete status of an S3 bucket. If versioning is enabled, this makes it much more challenging to prevent the victim from being able to recover their files, since applying encryption does not retroactively encrypt old versions of files (it just creates a new version that is encrypted). MFA Delete being enabled prevents the attacker from being able to change versioning settings or permanently delete the old versions of the files without a MFA code.</p>
+</details>
+</details>
+<p>Based on what we observed at the start of our investigation, there is something missing from the logs...</p>
+<details class="question">
+<summary>What activity is missing from the logs that we know happened?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Revisit what we found in the bucket when we logged into the console.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The ransom note was created in the bucket but there is no evidence of that upload occurring. If you visit the bucket in the console, look at the <code>Server access logging</code> and <code>AWS CloudTrail data events</code> and you'll see there's no access or data events enabled, meaning we only will see management events. </p>
+<p><em>Note</em>: This information can also be found directly in Datadog via the Resource Catalog based on the <code>logging_enabled</code> key in Resource Info.</p>
+</details>
+</details>
+<p>If those events are missing, maybe there are other events that could be missing too. Let's review the IAM user's permissions to see what other unlogged actions could've occurred.</p>
+<details class="question">
+<summary>What permissions does the user have that would not have been logged if they did occur?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Go to the AWS console and look at the user in IAM.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The only policy attacked to this user is <code>CloudOpsS3Access</code>. Along with the observed management plane events, the user had the ability to <code>GetObject</code>, <code>PutObject</code>, or <code>CopyObject</code> in S3. This means that the attacker could have downloaded or copied the data without us having a way to find out. They could have also uploaded additional files elsewhere in the account, which would require a manual audit of each bucket for recent uploads.</p>
+</details>
+</details>
+<p>At this point, we've got a good feel for the flow of the attack. The threat actor did reconnaisance searching for buckets in the account, checked which accounts had versioning/MFA delete enabled, chose a target bucket to encrypt, and left behind a ransom note. We still don't know how the attacker gained access to the IAM account though.</p>
+<details class="question">
+<summary>How did the attacker authenticate in order to perform these actions?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the accessKeyId used for the <code>ListBuckets</code> and <code>GetBucketVersioning</code> events.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The access key ID associated with the user identity is <code>AKIA2LIPZS7T6K4WNUAC</code>. As discussed when we broke down access key ID prefixes, the <code>AKIA</code> prefix indicates an access key is being used.</p>
+</details>
+</details>
+<p>The challenge at this point is there isn't really any evidence of <em>how</em> the attacker got ahold of the access key. Most often threat actors steal keys that are accidentally leaked in code repositories, but it could have also been stolen from a user's laptop or cloud storage. Unless an alert from AWS or Datadog tells us an API key is leaked, the exact source of the leak is not clear. The best we can do is uncover who created the key for this <code>CloudOpsMonitor</code> account and see where the key has been shared. </p>
+<details class="question">
+<summary>Who created the access key that has been compromised?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Search for the event name associated with access key creation that also contains a field (the response elements) with the identified key.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The <code>CreateAccessKey</code> event shows that <code>megan.fonseca@datadoghq.com</code> created the access key for the account.   </p>
+<p><em>Note</em>: In this case the timestamps and IP and user agent align due to how the attack simulation was executed. In a real incident you might need to look further back in the logs to find the access key creation event and it's likely to have less overlap with the attacker behavior.</p>
+</details>
+</details>
 
 
 

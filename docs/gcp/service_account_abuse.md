@@ -82,7 +82,7 @@ Now we've determined that the threat actor's intention was likely to leverage ou
 
 ??? question "What is the scope of access that this account has?"
     ??? tip "Hint"
-        Use Policy Analyzed in Google Cloud to understand the service account's permissions. 
+        Use Policy Analyzer in Google Cloud to understand the service account's permissions. 
 
     ??? info "Answer"
         The service account has an Editor role grant on the project `Datadog Dfir Training 2025`.
