@@ -99,14 +99,6 @@ At this point, we've figured out that we were the target of a ransomware attack 
     ??? info "Answer"
         The user agent ends with `command#s3api.get-bucket-versioning` indicating the command executed was `aws s3api get-bucket-versioning`. We do not know if any additional parameters were passed.
 
-??? question "What AWS CLI command was caused these events to be generated?"
-
-    ??? tip "Hint"
-        Look at the user agent.
-
-    ??? info "Answer"
-        The user agent ends with `command#s3api.get-bucket-versioning` indicating the command executed was `aws s3api get-bucket-versioning`. We do not know if any additional parameters were passed.
-
 
 ??? question "What information can the attacker find out from running this command? How is it relevant to the threat actor's attack?"
 
