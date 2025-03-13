@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://megantron512.github.io/dfir-training-workbook/</loc>
+         <lastmod>2025-03-13</lastmod>
+    </url>
+    <url>
+         <loc>https://megantron512.github.io/dfir-training-workbook/AWS/aws_ransomware/</loc>
+         <lastmod>2025-03-13</lastmod>
+    </url>
+    <url>
+         <loc>https://megantron512.github.io/dfir-training-workbook/AWS/lab1/</loc>
+         <lastmod>2025-03-13</lastmod>
+    </url>
+    <url>
+         <loc>https://megantron512.github.io/dfir-training-workbook/gcp/service_account_abuse/</loc>
+         <lastmod>2025-03-13</lastmod>
+    </url>
+</urlset>
