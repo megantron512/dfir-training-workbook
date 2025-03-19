@@ -502,11 +502,9 @@
 
 <h1 id="default-service-account-abuse-in-google-cloud">Default Service Account Abuse in Google Cloud</h1>
 <h2 id="background">Background</h2>
-<p>SIRT has received a <a href="https://app.datadoghq.com/security?query=%40workflow.rule.type%3A%28%22Log%20Detection%22%20OR%20%22Signal%20Correlation%22%29%20source%3Agcp&amp;agg_m=count&amp;agg_m_source=base&amp;agg_t=count&amp;column=time&amp;event=AwAAAZU4_Ad1_vpBkQAAABhBWlU0X0FkMUFBQURFUTUyRDlVaFR3QUEAAAAkMDE5NTM4ZmQtZjVmMC00ODRmLWEzMjktMGZmNDU3ZDIxMmY3AAAFUg&amp;fromUser=false&amp;order=desc&amp;product=siem&amp;start=1740331935795&amp;end=1740418335795&amp;paused=false">Google Cloud Instance Creation via gcloud signal</a> that has been determined to be suspicious/malicious. Investigate the signal and determine how the threat actor accessed the environment and what they did with their access.</p>
+<p>SIRT has received a <a href="https://app.datadoghq.com/security?query=%40workflow.rule.type%3A%28%22Log%20Detection%22%20OR%20%22Signal%20Correlation%22%29%20source%3Agcp&amp;agg_m=count&amp;agg_m_source=base&amp;agg_t=count&amp;column=time&amp;event=AwAAAZWu1M22tVLd-QAAABhBWld1MU0yMkFBRG83eHgtZkdDTU5nQUEAAAAkMDE5NWFlZGYtMDg5Ny00YjM0LTg5MWEtM2EzMGUwY2FkMGU4AAADGA&amp;fromUser=false&amp;order=desc&amp;product=siem&amp;viz=stream&amp;start=1742309350888&amp;end=1742395750888&amp;paused=false">Google Cloud Instance Creation via gcloud signal</a> that has been determined to be suspicious/malicious. Investigate the signal and determine how the threat actor accessed the environment and what they did with their access.</p>
 <h3 id="logs">Logs</h3>
-<p>The logs for this lab fall within the following time frame: <code>&lt;tbd&gt;</code>.
-We can use the following filter to focus on the CloudTrail logs in the relevant AWS account:
-<code>source:gcp* project_id:datadog-dfir-training-2025</code> </p>
+<p>The logs for this lab can be access via this link: <a href="https://app.datadoghq.com/logs?query=source%3Agcp%2A%20project_id%3Adatadog-dfir-training-2025&amp;agg_m=count&amp;agg_m_source=base&amp;agg_q=%40evt.name&amp;agg_q_source=base&amp;agg_t=count&amp;cols=host%2Cservice&amp;fromUser=true&amp;messageDisplay=inline&amp;refresh_mode=paused&amp;storage=hot&amp;stream_sort=desc&amp;top_n=10&amp;top_o=top&amp;viz=stream&amp;x_missing=true&amp;from_ts=1742394300000&amp;to_ts=1742395800000&amp;live=false">Google Cloud Project Logs</a>.</p>
 <p>Don't forget that there are some logs that don't make it to Datadog that might be worth exploring within Google Cloud Console.</p>
 <h2 id="investigation">Investigation</h2>
 <p>Start by reviewing the signal and identifying noteworthy properties that might act as pivot points to discover related activity. </p>
@@ -524,12 +522,17 @@ We can use the following filter to focus on the CloudTrail logs in the relevant 
 <details class="info">
 <summary>Answer</summary>
 <ul>
-<li>IP address: <code>1.1.1.1</code></li>
+<li>Multiple IP addresses:<ul>
+<li><code>212.30.33.188</code></li>
+<li><code>212.30.33.202</code></li>
+<li><code>212.30.33.222</code></li>
+</ul>
+</li>
 <li>User ID: <code>research-512-serivce-account@datadog-dfir-training-2025.iam.gserviceaccount.com</code></li>
 <li>Related resources:   <ul>
-<li>GCE INSTANCE 1</li>
-<li>GCE INSTANCE 2</li>
-<li>GCE INSTANCE 3</li>
+<li><code>projects/datadog-dfir-training-2025/zones/us-central1-b/instances/gpu-instance-1</code></li>
+<li><code>projects/datadog-dfir-training-2025/zones/us-central1-b/instances/instance-1</code></li>
+<li><code>projects/datadog-dfir-training-2025/zones/us-central1-b/instances/gpu-instance-2</code></li>
 </ul>
 </li>
 </ul>
@@ -549,7 +552,6 @@ We can use the following filter to focus on the CloudTrail logs in the relevant 
 <li><code>v1 compute.instances.insert</code> </li>
 <li><code>iam.serviceAccounts.actAs</code></li>
 <li><code>v1.compute.instances.get</code></li>
-<li><code>v1.compute.projects.get</code></li>
 <li><code>v1.compute.zoneOperations.wait</code>  </li>
 <li><code>v1.compute.zones.get</code> </li>
 </ul>
@@ -557,7 +559,7 @@ We can use the following filter to focus on the CloudTrail logs in the relevant 
 </details>
 <p>Most of the associated events are read-only activity, so let's focus on the first event type: <code>v1 compute.instances.insert</code>. This indicates attempts to deploy virtual machines on Google Cloud Compute.</p>
 <details class="question">
-<summary>How many virtual machines were deployed and hat are their instance names/IDs?</summary>
+<summary>How many virtual machines were deployed and what are their instance names/IDs?</summary>
 <details class="tip">
 <summary>Hint</summary>
 <p>Further filter the search for the project and service account using <code>@evt.name:v1 compute.instances.insert</code>. Look at <code>@data.protoPayload.resourceName</code> and <code>@data.resource.labels.instance_id</code> for the resource names and instance IDs.</p>
@@ -565,10 +567,23 @@ We can use the following filter to focus on the CloudTrail logs in the relevant 
 <details class="info">
 <summary>Answer</summary>
 <ul>
-<li><code>instance-1</code> (ID <insert ID>)</li>
-<li><code>instance-2</code> (ID <insert ID>)</li>
-<li><code>instance-3</code> (ID <insert ID>)</li>
+<li><code>instance-1</code> (<code>4005116539166594064</code>)</li>
+<li><code>gpu-instance-1</code> (<code>8182301838913530040</code>)</li>
+<li><code>gpu-instance-2</code> (<code>8506462674512996508</code>)</li>
 </ul>
+</details>
+</details>
+<details class="question">
+<summary>Why is there an error for one of the VM creation events?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the event with <code>status:error</code>, indicated by a red bar next to log entry. Look at the response details of that event for more context.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p><code>@data.protoPayload.response.error.message</code> contains the following error message:</p>
+<p><code>The resource 'projects/datadog-dfir-training-2025/zones/us-central1-b/instances/instance-1' already exists</code></p>
+<p>This indicates that the instance name (<code>instance-1</code>) is non-unique within the project.</p>
 </details>
 </details>
 <p>The logs don't provide full context. Let's look directly in Google Cloud at the virtual machines to see if there is anything interesting about the hosts that might point to attacker intent.</p>
@@ -585,6 +600,10 @@ We can use the following filter to focus on the CloudTrail logs in the relevant 
 <li>The host has GPUs attached. Attackers often create GPU-enabled VMs for the purpose of cryptomining.</li>
 <li>There is a <code>startup-script</code> key with a bash script that downloads a file from a remote host and executes it.</li>
 </ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The GPU usage is also present in the request details of the first <code>v1 compute.instances.insert</code> event for each instance creation. The startup script metadata implementation is <em>not</em> visible in the event.</p>
+</div>
 </details>
 </details>
 <p>Now we've determined that the threat actor's intention was likely to leverage our compute infrastructure for cryptomining or another malicious activity, we should work backwards to determine how this service account was compromised in the first place. </p>
@@ -610,7 +629,122 @@ We can use the following filter to focus on the CloudTrail logs in the relevant 
 <p>The service account has an Editor role grant on the project <code>Datadog Dfir Training 2025</code>.</p>
 </details>
 </details>
-<p>It appears the threat actor has gotten a copy of a service account key in order to leverage the account's editor permissions to carry out their attack. Now we need to determine how the threat actor obtained access to the key. We have the source IP of the service account activity, so let's see if there is any other anomalous activity tied to that IP address.</p>
+<p>It appears the threat actor has gotten a copy of a service account key in order to leverage the account's editor permissions to carry out their attack. There's one other "write" event from our initial list that we haven't looked at. Let's investigate that event.</p>
+<details class="question">
+<summary>What account was used to pivot to the <code>research-512-serivce-account@datadog-dfir-training-2025.iam.gserviceaccount.com</code> service account?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the request details in the <code>iam.serviceAccounts.actAs</code> event.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The service account <code>222174030404-compute@developer.gserviceaccount.com</code> is associated with the <code>iam.serviceAccounts.actAs</code> event. Based on the naming convention of this account, its a Compute Engine default service account.</p>
+</details>
+</details>
+<p>A search for that service account in the <code>@usr.email</code> or <code>@usr.id</code> field will return no results. Let's see about its presence in any other fields.</p>
+<details class="question">
+<summary>Outside of the <code>iam.serviceAccounts.actAs</code> event investigated above, what logs include a reference to the default service account?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Add a field for <code>*:222174030404-compute@developer.gserviceaccount.com</code>.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The only event in the results we haven't looked at doesn't have an event name and is an <code>undefined</code> service, but if you dig into the event, its a log entry associated with signal generated. It specifically is a signal for <code>Google Compute Engine service account used outside of Google Cloud</code>. If you expand the <code>Log Message</code> you can <code>View Security Signal</code>, which will provide a more readable view in Signal Explorer.</p>
+</details>
+</details>
+<details class="question">
+<summary>What events are associated with the signal?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Don't look at the <code>Related Logs</code> section; instead view the <code>@evt.name</code> list in the JSON.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>Three events were tied to the signal:
+- <code>storage.buckets.list</code>
+- <code>storage.objects.list</code> 
+- <code>storage.objects.get</code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Because of the log indexing and exclusion filters discussed in the training, the full list of logs is not provided, only a single sample event (<code>storage.objects.get</code> in this case).</p>
+</div>
+</details>
+</details>
+<p>Since we can't see the details of the storage logs in Datadog, let's log into the Google Cloud console and use their native Log Explorer to review these events. Set your time range to 9:15 AM - 9:45 AM UTC on 3/19/2025 to ensure the expected activity is included.</p>
+<details class="question">
+<summary>What tool/program was used to perform the bucket-related actions?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Use the following search to narrow down the logs:
+<div class="highlight"><pre><span></span><code>resource.type=&quot;gcs_bucket&quot;
+protoPayload.authenticationInfo.principalEmail=&quot;222174030404-compute@developer.gserviceaccount.com&quot;
+</code></pre></div>
+Look at the user agent field of any of the events.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The user agent associated with the <code>requestMetadata</code> is <code>curl/8.1.2,gzip(gfe)</code>, indicating the usage of <code>curl</code> to perform the API calls to Google Cloud Storage.</p>
+</details>
+</details>
+<details class="question">
+<summary>After listing the buckets, which bucket was targeted with the <code>storage.objects.list</code> method?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the resource name in the associated event.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The targeted bucket is <code>research-512-resources</code>.</p>
+</details>
+</details>
+<details class="question">
+<summary>Which file was downloaded from the above bucket?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the resource name in the associated event.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The targeted bucket is <code>research-512-service-account-creds.json</code>. Based on the name, there is a good chance this file contains credentials for the service account observed in the initial signal and is how the attacker was able to pivot.</p>
+</details>
+</details>
+<p>At this point we've figured out that the attacker used the default service account to obtain creds stored in a bucket. Those creds were then used to deploy GPU instances. The remaining unanswered question is how did the attacker gain access to the default service account. We've looked for the account being referenced in all fields in Datadog already and there were no results. Let's look across all logs in Google Cloud in case there are other logs not collected by Datadog.</p>
+<details class="question">
+<summary>What resource is associated with the additional event?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Remove any other filters and field names from your search and just run a string search for <code>"222174030404-compute@developer.gserviceaccount.com"</code>. Look at the <code>resource</code> section of the log entry.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The associated resource is a container named <code>vulnerable-java-application-1</code> running on a cluster called <code>cluster-1</code>.   </p>
+</details>
+</details>
+<details class="question">
+<summary>What does the message tell us about how the attacker authenticated?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the message field on the aforementioned event.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The message indicates that somewhere within the container's app, the attacker was able to inject the string <code>google.com&gt;/dev/null &amp;&amp; curl -H Metadata-Flavor:Google 169.254.169.254/computeMetadata/v1/instance/service-accounts/222174030404-compute@developer.gserviceaccount.com/token</code>. This is an attempt by the attacker to query the metadata service for the token associated with the service account, which is how they were able to proceed with their next steps.</p>
+</details>
+</details>
+<details class="question">
+<summary>Did the threat actor attempt to execute any other commands?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Search for <code>resource.labels.container_name="vulnerable-java-application-1"</code> to retrieve all of the application logs.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>Prior to running the curl command to get the token, the following command was executed: <code>curl -H Metadata-Flavor:Google 169.254.169.254/computeMetadata/v1/instance/service-accounts/</code>. This would have returned a list of service accounts attached to the container/cluster, which is how they got the user ID needed to retrieve the token.</p>
+</details>
+</details>
+<p>To prevent this vulnerable app from being exploited by a real threta actor, it's since been torn down. If further investigation into the container/cluster could have been performed, you would find that the vulnerable app was exposed as a service open to the world. </p>
+<p>To recap, the threat actor's attack path was to exploit a public container in order to query the metadata service and obtain the default service account token. This token had effective permissions (based on access scope) that allowed it to be used to query all buckets and their objects within the project. One of the buckets contained a credential file that could be used to authenticate as a service account with editor permissions at the project-level. The permissions were used to deploy GPU-enabled VMs.</p>
 
 
 
