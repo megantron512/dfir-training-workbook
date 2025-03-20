@@ -92,7 +92,7 @@ At this point, we've figured out that we were the target of a ransomware attack 
 
 Let's look through each of these events to glean some insight into what the attacker was able to do in the environment. The first events are related to CloudTrail logging.
 
-??? question "What did the threat actor try to do with CloudTrail? What was the result?"
+??? question "What did the threat actor try to do with CloudTrail logging? What was the result?"
 
     ??? tip "Hint"
         Look at the sequence of events and pay attention to the `@level` associated with events.
