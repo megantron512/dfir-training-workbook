@@ -155,9 +155,9 @@ Now we will look at the activity happening after the encrytion activity that we 
         Filter to the `DeleteSnaphot` events and group by `@requestParameters.snapshotId`.
 
     ??? info "Answer"
-        The following two snapshots are deleted:
-        - `snap-09336c08a16457168`
-        - `snap-0a5c7f52ffd2db5da`
+        The following two snapshots are deleted:  
+        - `snap-09336c08a16457168`  
+        - `snap-0a5c7f52ffd2db5da`  
 
 ??? question "What events may explain why 4 snapshots were copied but only 2 were deleted?"
 
