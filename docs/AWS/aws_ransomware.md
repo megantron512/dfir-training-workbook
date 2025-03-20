@@ -51,7 +51,7 @@ Before broadening our search to all activity from the IAM user, let's first see 
 ??? question "How many files were encrypted? Gather a list of the files."
 
     ??? tip "Hint"
-        Filter by the KMS key ARN: `index:cloudtrail account:711387092967 @resources.ARN:"arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5"`. Group by `@requestParameters.encryptionContext.aws:s3:arn` for a quick view of all encrypted resources. Visualize as a table. 
+        Filter by the KMS key ARN: `index:cloudtrail account:711387092967 @resources.ARN:"arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5"`. Group by `@requestParameters.encryptionContext.aws:s3:arn` for a quick view of all encrypted resources. Visualize as a table and be mindful of the display limit.  
 
     ??? info "Answer"
         10 files were encrypted, all in the `financial-reports-2025-7449` bucket. 
