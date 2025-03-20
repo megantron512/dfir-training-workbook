@@ -40,7 +40,7 @@ Now that we have reviewed the triggering event, let's look at the bigger picture
 
 ??? question "What indicators can help us track the relevant activity?"
     ??? tip "Hint"
-        Since the IP address is `AWS Internal` this is not going to help. Fields like account or service are too broad and will capture benign activity. Request and event IDs are going to be unique to this specific event. Consider fields that are unique enough to reduce noise from legiitmate users but not too unique to limit to just this event type.
+        Since the IP address is `AWS Internal` this is not going to help. Fields like account or service are too broad and will capture benign activity. Request and event IDs are going to be unique to this specific event. Consider fields that are unique enough to reduce noise from legitimate users but not too unique to limit to just this event type.
 
     ??? info "Answer"
         - User ARN: `arn:aws:iam::711387092967:user/CloudOpsMonitor`    
