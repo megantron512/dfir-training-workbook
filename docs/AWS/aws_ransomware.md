@@ -19,7 +19,7 @@ Start by reviewing the triggering event and understanding what is happening.
 ??? question "What is the attacker doing based on this event?"
     ??? tip "Hint"
         - Search Google or generative AI to understand the `GenerateDataKey` event.  
-        - Look at `@requestParameters` for more context.
+        - Look at `@requestParameters` in the `GenerateDataKey` event for more context.
 
 
     ??? info "Answer"
@@ -40,7 +40,7 @@ Now that we have reviewed the triggering event, let's look at the bigger picture
 
 ??? question "What indicators can help us track the relevant activity?"
     ??? tip "Hint"
-        Since the IP address is `AWS Internal` this is not going to help. Fields like account or service are too broad and will capture benign activity. Request and event IDs are going to be unique to this specific event. Consider fields that are unique enough to reduce noise from legiitmate users but not too unique to limit to just this event type.
+        Since the IP address is `AWS Internal` this is not going to help. Fields like account or service are too broad and will capture benign activity. Request and event IDs are going to be unique to this specific event. Consider fields that are unique enough to reduce noise from legitimate users but not too unique to limit to just this event type.
 
     ??? info "Answer"
         - User ARN: `arn:aws:iam::711387092967:user/CloudOpsMonitor`    
@@ -51,7 +51,7 @@ Before broadening our search to all activity from the IAM user, let's first see 
 ??? question "How many files were encrypted? Gather a list of the files."
 
     ??? tip "Hint"
-        Filter by the KMS key ARN: `index:cloudtrail account:711387092967 @resources.ARN:"arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5"`. Group by `@requestParameters.encryptionContext.aws:s3:arn` for a quick view of all encrypted resources.
+        Filter by the KMS key ARN: `index:cloudtrail account:711387092967 @resources.ARN:"arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5"`. Group by `@requestParameters.encryptionContext.aws:s3:arn` for a quick view of all encrypted resources. Visualize as a table and be mindful of the display limit.  
 
     ??? info "Answer"
         10 files were encrypted, all in the `financial-reports-2025-7449` bucket. 
@@ -92,7 +92,7 @@ At this point, we've figured out that we were the target of a ransomware attack 
 
 Let's look through each of these events to glean some insight into what the attacker was able to do in the environment. The first events are related to CloudTrail logging.
 
-??? question "What did the threat actor try to do with CloudTrail? What was the result?"
+??? question "What did the threat actor try to do with CloudTrail logging? What was the result?"
 
     ??? tip "Hint"
         Look at the sequence of events and pay attention to the `@level` associated with events.
@@ -155,9 +155,9 @@ Now we will look at the activity happening after the encrytion activity that we 
         Filter to the `DeleteSnaphot` events and group by `@requestParameters.snapshotId`.
 
     ??? info "Answer"
-        The following two snapshots are deleted:
-        - `snap-09336c08a16457168`
-        - `snap-0a5c7f52ffd2db5da`
+        The following two snapshots are deleted:  
+        - `snap-09336c08a16457168`  
+        - `snap-0a5c7f52ffd2db5da`  
 
 ??? question "What events may explain why 4 snapshots were copied but only 2 were deleted?"
 
