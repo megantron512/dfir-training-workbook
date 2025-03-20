@@ -19,7 +19,7 @@ Start by reviewing the triggering event and understanding what is happening.
 ??? question "What is the attacker doing based on this event?"
     ??? tip "Hint"
         - Search Google or generative AI to understand the `GenerateDataKey` event.  
-        - Look at `@requestParameters` for more context.
+        - Look at `@requestParameters` in the `GenerateDataKey` event for more context.
 
 
     ??? info "Answer"
