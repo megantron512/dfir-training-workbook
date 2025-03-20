@@ -7,7 +7,7 @@ SIRT has received an alert about an [external KMS key being used to encrypt reso
 The logs for this lab can be access via this link: [Ransomware in AWS Logs](https://app.datadoghq.com/logs?query=account%3A711387092967&agg_m=count&agg_m_source=base&agg_t=count&clustering_pattern_field_path=message&cols=host%2Cservice&fromUser=true&index=cloudtrail&messageDisplay=inline&refresh_mode=paused&storage=hot&stream_sort=desc&viz=stream&from_ts=1742324100000&to_ts=1742325000000&live=false).
 
 !!! note
-    Since the sandbox infrastructure was used for lab development, if you do not limit your searches to account ID `711387092967`, "attacker" activity will appear in the results. Feel free to look at the events to get familiar with different event types, but in the case of a similar incident, these events will not appear as they will be logged in attacker infrastructure.
+    Since the sandbox infrastructure was used for lab development, if you do not limit your searches to account ID `711387092967`, setup activity for attacker resources will appear in the results. Feel free to look at the events to get familiar with different event types, but in the case of a similar incident, these events will not appear as they will be logged in attacker infrastructure.
 
 !!! note
     Due to the testing script used, the benign setup activity has the same IP as the attacker activity, which is unlikely to happen in most cloud attacks. Usually, the IP address would be a useful pivot point.
@@ -26,7 +26,7 @@ Start by reviewing the triggering event and understanding what is happening.
         This event indicates an attempt to encrypt data in AWS. The request parameters provide the following context:  
         
         - The object that was encrypted is `arn:aws:s3:::financial-reports-2025-7449/accounting_data_2025.xml`, a file named `accounting_data_2025.xml` in an S3 bucket called `financial-reports-2025-7449`.   
-        - It was encryted with a KMS key with ARN `arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5`. 
+        - It was encrypted with a KMS key with ARN `arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5`. 
 
 
 ??? question "What is a notable attribute of the KMS key involved in the encryption?"
@@ -40,10 +40,7 @@ Now that we have reviewed the triggering event, let's look at the bigger picture
 
 ??? question "What indicators can help us track the relevant activity?"
     ??? tip "Hint"
-        Take note of the following properties:   
-
-        - @userIdentity.arn
-        - @resource.ARN
+        Since the IP address is `AWS Internal` this is not going to help. Fields like account or service are too broad and will capture benign activity. Request and event IDs are going to be unique to this specific event. Consider fields that are unique enough to reduce noise from legiitmate users but not too unique to limit to just this event type.
 
     ??? info "Answer"
         - User ARN: `arn:aws:iam::711387092967:user/CloudOpsMonitor`    
@@ -79,12 +76,13 @@ At this point, we've figured out that we were the target of a ransomware attack 
         Search based on the username `CloudOpsMonitor` and group by `@evt.name`.
 
     ??? info "Answer"
-        Along with the previously-investigated `GenerateDataKey` action, the IAM account was also used to perform the following actions:
-        - `DescribeTrails`
-        - `StopLogging`
-        - `PutUserPolicy`
-        - `GetTrailStatus` 
-        - `ListBuckets`   
+        Along with the previously-investigated `GenerateDataKey` action, the IAM account was also used to perform the following actions:   
+
+        - `DescribeTrails`   
+        - `StopLogging`   
+        - `PutUserPolicy`   
+        - `GetTrailStatus`   
+        - `ListBuckets`    
         - `GetBucketVersioning`
         - `DescribeKey`    
         - `DescribeSnapshots`  
@@ -121,7 +119,7 @@ Let's move onto the bucket activity we see after the attempts to stop CloudTrail
         Further filter the search to only include `@evt.name:GetBucketVersioning`. Count the results. Group by the bucket name to see unique count of buckets.
 
     ??? info "Answer"
-        There are 16 `GetBucketVersioning` events targeting 8 different buckets.
+        There are 12 `GetBucketVersioning` events targeting 6 different buckets.
 
 
 ??? question "What AWS CLI command was caused these events to be generated?"
@@ -141,7 +139,7 @@ Let's move onto the bucket activity we see after the attempts to stop CloudTrail
     ??? info "Answer"
         This command returns the versioning state and MFA Delete status of an S3 bucket. If versioning is enabled, this makes it much more challenging to prevent the victim from being able to recover their files, since applying encryption does not retroactively encrypt old versions of files (it just creates a new version that is encrypted). MFA Delete being enabled prevents the attacker from being able to change versioning settings or permanently delete the old versions of the files without a MFA code.
 
-Now we will look at the activity happening after the encrytion activity that we started from. The majority of the events at this point are related to snapshots. 
+Now we will look at the activity happening after the encrytion activity that we started from. Specifically, we are going to look at the snapshot "write" events.
 
 ??? question "How many snapshots were copied? What seems to be the threat actor's intent with these actions"
 
@@ -191,7 +189,7 @@ If those events are missing, maybe there are other events that could be missing 
 
     ??? info "Answer"
 
-        There are two polcies attached to this user. `CloudOpsAdmins` is the one we investigated as it was added by the attacker. The only existing policy from before the attack that is attached to this user is `CloudOpsS3Access`. Along with the observed management plane events, the user had the ability to `GetObject`, `PutObject`, or `CopyObject` in S3. This means that the attacker could have downloaded or copied the data without us having a way to find out. They could have also uploaded additional files elsewhere in the account, which would require a manual audit of each bucket for recent uploads.
+        There are two policies attached to this user. `CloudOpsAdmins` is the one we investigated as it was added by the attacker. The only existing policy from before the attack that is attached to this user is `CloudOpsS3Access`. Along with the observed management plane events, the user had the ability to `GetObject`, `PutObject`, or `CopyObject` in S3. This means that the attacker could have downloaded or copied the data without us having a way to find out. They could have also uploaded additional files elsewhere in the account, which would require a manual audit of each bucket for recent uploads.
 
 At this point, we've got a good feel for the flow of the attack. The threat actor did reconnaisance searching for buckets in the account, checked which accounts had versioning/MFA delete enabled, chose a target bucket to encrypt, and left behind a ransom note. We still don't know how the attacker gained access to the IAM account though.
 
@@ -202,7 +200,7 @@ At this point, we've got a good feel for the flow of the attack. The threat acto
         Look at the accessKeyId used for the `ListBuckets` and `GetBucketVersioning` events.
 
     ??? info "Answer"
-        The access key ID associated with the user identity is `AKIA2LIPZS7T27U6CQ24`. As discussed when we broke down access key ID prefixes, the `AKIA` prefix indicates an access key is being used.
+        The access key ID associated with the user identity is `AKIA2LIPZS7T27U6CQ24`. As discussed when we broke down [access key ID prefixes](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html), the `AKIA` prefix indicates an access key is being used.
 
 The challenge at this point is there isn't really any evidence of _how_ the attacker got ahold of the access key. Most often threat actors steal keys that are accidentally leaked in code repositories, but it could have also been stolen from a user's laptop or cloud storage. Unless an alert from AWS or Datadog tells us an API key is leaked, the exact source of the leak is not clear. The best we can do is uncover who created the key for this `CloudOpsMonitor` account and see where the key has been shared. 
 
