@@ -562,7 +562,7 @@
 <summary>How many virtual machines were deployed and what are their instance names/IDs?</summary>
 <details class="tip">
 <summary>Hint</summary>
-<p>Further filter the search for the project and service account using <code>@evt.name:v1 compute.instances.insert</code>. Look at <code>@data.protoPayload.resourceName</code> and <code>@data.resource.labels.instance_id</code> for the resource names and instance IDs.</p>
+<p>Further filter the search for the project and service account using <code>@evt.name:v1.compute.instances.insert</code>. Look at <code>@data.protoPayload.resourceName</code> and <code>@data.resource.labels.instance_id</code> for the resource names and instance IDs.</p>
 </details>
 <details class="info">
 <summary>Answer</summary>
@@ -743,7 +743,7 @@ Look at the user agent field of any of the events.</p>
 <p>Prior to running the curl command to get the token, the following command was executed: <code>curl -H Metadata-Flavor:Google 169.254.169.254/computeMetadata/v1/instance/service-accounts/</code>. This would have returned a list of service accounts attached to the container/cluster, which is how they got the user ID needed to retrieve the token.</p>
 </details>
 </details>
-<p>To prevent this vulnerable app from being exploited by a real threta actor, it's since been torn down. If further investigation into the container/cluster could have been performed, you would find that the vulnerable app was exposed as a service open to the world. </p>
+<p>To prevent this vulnerable app from being exploited by a real threat actor, it's since been torn down. If further investigation into the container/cluster could have been performed, you would find that the vulnerable app was exposed as a service open to the world. </p>
 <p>To recap, the threat actor's attack path was to exploit a public container in order to query the metadata service and obtain the default service account token. This token had effective permissions (based on access scope) that allowed it to be used to query all buckets and their objects within the project. One of the buckets contained a credential file that could be used to authenticate as a service account with editor permissions at the project-level. The permissions were used to deploy GPU-enabled VMs.</p>
 
 

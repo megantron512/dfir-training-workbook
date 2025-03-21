@@ -523,7 +523,7 @@
 <summary>Hint</summary>
 <ul>
 <li>Search Google or generative AI to understand the <code>GenerateDataKey</code> event.  </li>
-<li>Look at <code>@requestParameters</code> for more context.</li>
+<li>Look at <code>@requestParameters</code> in the <code>GenerateDataKey</code> event for more context.</li>
 </ul>
 </details>
 <details class="info">
@@ -551,7 +551,7 @@
 <summary>What indicators can help us track the relevant activity?</summary>
 <details class="tip">
 <summary>Hint</summary>
-<p>Since the IP address is <code>AWS Internal</code> this is not going to help. Fields like account or service are too broad and will capture benign activity. Request and event IDs are going to be unique to this specific event. Consider fields that are unique enough to reduce noise from legiitmate users but not too unique to limit to just this event type.</p>
+<p>Since the IP address is <code>AWS Internal</code> this is not going to help. Fields like account or service are too broad and will capture benign activity. Request and event IDs are going to be unique to this specific event. Consider fields that are unique enough to reduce noise from legitimate users but not too unique to limit to just this event type.</p>
 </details>
 <details class="info">
 <summary>Answer</summary>
@@ -566,7 +566,7 @@
 <summary>How many files were encrypted? Gather a list of the files.</summary>
 <details class="tip">
 <summary>Hint</summary>
-<p>Filter by the KMS key ARN: <code>index:cloudtrail account:711387092967 @resources.ARN:"arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5"</code>. Group by <code>@requestParameters.encryptionContext.aws:s3:arn</code> for a quick view of all encrypted resources.</p>
+<p>Filter by the KMS key ARN: <code>index:cloudtrail account:711387092967 @resources.ARN:"arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5"</code>. Group by <code>@requestParameters.encryptionContext.aws:s3:arn</code> for a quick view of all encrypted resources. Visualize as a table and be mindful of the display limit.  </p>
 </details>
 <details class="info">
 <summary>Answer</summary>
@@ -613,7 +613,7 @@
 </details>
 <p>Let's look through each of these events to glean some insight into what the attacker was able to do in the environment. The first events are related to CloudTrail logging.</p>
 <details class="question">
-<summary>What did the threat actor try to do with CloudTrail? What was the result?</summary>
+<summary>What did the threat actor try to do with CloudTrail logging? What was the result?</summary>
 <details class="tip">
 <summary>Hint</summary>
 <p>Look at the sequence of events and pay attention to the <code>@level</code> associated with events.</p>
@@ -689,9 +689,9 @@
 </details>
 <details class="info">
 <summary>Answer</summary>
-<p>The following two snapshots are deleted:
-- <code>snap-09336c08a16457168</code>
-- <code>snap-0a5c7f52ffd2db5da</code></p>
+<p>The following two snapshots are deleted:<br />
+- <code>snap-09336c08a16457168</code><br />
+- <code>snap-0a5c7f52ffd2db5da</code>  </p>
 </details>
 </details>
 <details class="question">
