@@ -158,7 +158,7 @@ Since we can't see the details of the storage logs in Datadog, let's log into th
 
 ??? question "Which file was downloaded from the above bucket?"
     ??? tip "Hint"
-        Look at the resource name in the associated event.
+        Look at the resource name in a `storage.objects.get` event.
 
     ??? info "Answer"
         The targeted bucket is `research-512-service-account-creds.json`. Based on the name, there is a good chance this file contains credentials for the service account observed in the initial signal and is how the attacker was able to pivot.
