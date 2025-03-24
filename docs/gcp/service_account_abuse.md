@@ -134,7 +134,7 @@ A search for that service account in the `@usr.email` or `@usr.id` field will re
         !!! note
             Because of the log indexing and exclusion filters discussed in the training, the full list of logs is not provided, only a single sample event (`storage.objects.get` in this case).
 
-Since we can't see the details of the storage logs in Datadog, let's log into the Google Cloud console and use their native Log Explorer to review these events. Set your time range to 9:15 AM - 9:45 AM UTC on 3/19/2025 to ensure the expected activity is included.
+Since we can't see the details of the storage logs in Datadog, let's log into the Google Cloud console and use their native Log Explorer to review these events. Set your time range to 14:15 (2:15 PM) - 14:45 (2:45 PM) UTC on 3/19/2025 to ensure the expected activity is included.
 
 ??? question "What tool/program was used to perform the bucket-related actions?"
     ??? tip "Hint"
