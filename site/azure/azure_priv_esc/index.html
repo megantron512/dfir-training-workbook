@@ -735,16 +735,20 @@
 <p>The key description that was updated is <code>["[KeyIdentifier=480946b1-433f-4634-8b85-bfe21266007e,KeyType=Password,KeyUsage=Verify,DisplayName=test]"]</code>. We can see within that string that the display name is <code>test</code>.</p>
 </details>
 </details>
-<p>??? question "What is the other name for a key type of <code>Password</code>?"
-    ??? tip "Hint"
-        Check out Microsoft's documentation for <a href="https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app?tabs=federated-credential%2Cexpose-a-web-api#add-credentials">adding credentials</a>.</p>
-<pre><code>??? info "Answer"
-    As can be seen with a Google search, at the reference link in the hint, or by going directly to the portal, there is no options to "Add password". The documentation mentions the following:  
-    ```
-    Sometimes called an application password, a client secret is a string value your app can use in place of a certificate to identify itself.
-    ```    
-    While the log references `password`, in the UI we would be adding a `client secret`.
-</code></pre>
+<details class="question">
+<summary>What is the other name for a key type of <code>Password</code>?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Check out Microsoft's documentation for <a href="https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app?tabs=federated-credential%2Cexpose-a-web-api#add-credentials">adding credentials</a>.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>As can be seen with a Google search, at the reference link in the hint, or by going directly to the portal, there is no options to "Add password". The documentation mentions the following:<br />
+<div class="highlight"><pre><span></span><code>Sometimes called an application password, a client secret is a string value your app can use in place of a certificate to identify itself.
+</code></pre></div>
+While the log references <code>password</code>, in the UI we would be adding a <code>client secret</code>. </p>
+</details>
+</details>
 <p>Feel free to look at the final <code>Update application</code> event but it does not provide any additional context that will assist in the investigation. Let's look at the credential that was created next.</p>
 <details class="question">
 <summary>What was the created key used for?</summary>

@@ -107,7 +107,7 @@ Let's start with the earliest of these additional events to see if we can expand
     ??? info "Answer"
         The key description that was updated is `["[KeyIdentifier=480946b1-433f-4634-8b85-bfe21266007e,KeyType=Password,KeyUsage=Verify,DisplayName=test]"]`. We can see within that string that the display name is `test`.
 
- ??? question "What is the other name for a key type of `Password`?"
+??? question "What is the other name for a key type of `Password`?"
     ??? tip "Hint"
         Check out Microsoft's documentation for [adding credentials](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app?tabs=federated-credential%2Cexpose-a-web-api#add-credentials).
 
