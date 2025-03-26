@@ -118,6 +118,101 @@ Let's start with the earliest of these additional events to see if we can expand
         ```    
         While the log references `password`, in the UI we would be adding a `client secret`. 
     
+Feel free to look at the final `Update application` event but it does not provide any additional context that will assist in the investigation. Let's look at the credential that was created next.
+
+??? question "What was the created key used for?"
+    ??? tip "Hint"
+        Run a search for the key identifier from the last question present in any field (using `*:`).
+
+    ??? info "Answer"
+        The key appears as `@properties.servicePrincipalCredentialKeyId` in the sign-in events that were previously reviewed. 
+
+!!! warning 
+    The below timeline should only be reviewed after completing the previous steps otherwise it will give away answers.
+
+??? note "Timeline"
+    Based on this information we know the following sequence of events:  
+    1. `devindeveloper@pdedatadogoutlook.onmicrosoft.com` updates an application to associate a client secret with `DFIR Training - Top Dog Role Management`.    
+    2. `DFIR Training - Top Dog Role Management` logs in using the client secret generated in step 1.   
+    3. `DFIR Training - Top Dog Role Management` grants `devindeveloper@pdedatadogoutlook.onmicrosoft.com` global admin role.
+
+The next step from here is to find out what the user did with the newly-granted global admin permissions. Since we see no more activity for the user account when searching for `@usr.name`, let's once again broaden the search via a wildcard field name search.
+
+??? question "Excluding sign-in activity, what additional results are returned for the user in the broadened search?"
+    ??? tip "Hint"
+        Filter by `*:devindeveloper@pdedatadogoutlook.onmicrosoft.com` and look at unique event names.
+
+    ??? info "Answer"
+        The following events have not yet been reviewed:  
+
+        - `User has elevated their access to User Access Administrator for their Azure Resources`   
+        - `MICROSOFT.AUTHORIZATION/ROLEASSIGNMENTS/WRITE`    
+        - `MICROSOFT.SERIALCONSOLE/SERIALPORTS/CONNECT/ACTION`   
+        - `MICROSOFT.COMPUTE/VIRTUALMACHINES/RUNCOMMAND/ACTION`    
+        - `Admin registered security info`
+
+We'll review events in chronological order to find out what the threat actor did after receiving global admin access. The first event is the access elevation to User Access Administrator.
+
+??? question "How does User Access Administrator differ from Global Admin?"
+    ??? tip "Hint"
+        Google or use GenerativeAI to learn about the difference.
+
+    ??? info "Answer"
+        Global admin is an **EntraID role** allowing management of EntraID users, groups, apps, and settings. It does not give access over all subscriptions and resource. User access administrator is an **RBAC role** and allows for viewing resources and assigning access at the subscription/resource level.
+
+        As per [Microsoft documenation](https://learn.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#how-does-elevated-access-work):
+
+        > Microsoft Entra ID and Azure resources are secured independently from one another. That is, Microsoft Entra role assignments do not grant access to Azure resources, and Azure role assignments do not grant access to Microsoft Entra ID. 
+
+Now let's look at the resource management events to understand interactions with resources in our environment.
+
+??? question "Why are there multiple events for each event type we observed (i.e. what is the key difference the events with the same type)?"
+    ??? tip "Hint"
+        Look at the fields in each one and identify a field that changes value and helps determine why there is multiple.
+
+    ??? info "Answer"
+        The `@evt.outcome` field shows us that these logs are indicating various "stages" of the action being taken; for example, `Start` followed by `Success`. The `Start` events show more context, so make sure you review those events specifically for the next set of questions.
+
+??? question "With regards to the role assignment write event, what role was assigned (not the ID, the role name)?"
+    ??? tip "Hint"
+        Use Google to find context around the role definition ID located in the request body.
+
+    ??? info "Answer"
+        A quick Google search should inform you that the ID `b24988ac-6180-42a0-ab88-20f7382dd24c` is associated with the built-in `Contributor` role. 
+
+??? question "Which principal/user was the role assigned to?"
+    ??? tip "Hint"
+        Take the principal ID from the request body and reference other logs from our investigation to tie that to an identity.
+
+    ??? info "Answer"
+        Other logs show us that `1606d62c-71bc-42ff-a03c-87809c6b0e68` is the ID associated with the `devindeveloper@pdedatadogoutlook.onmicrosoft.com` user.
+
+??? question "What is the scope of the role?"
+    ??? tip "Hint"
+        
+        Look at the request body again.
+
+    ??? info "Answer"
+        The request body specifies `subscriptions/fa3f98d4-2d5c-44ae-950f-ecbb74b5fab6` as the scope, meaning that Contributor permissions are granted to the user for the subscription and all resource groups and resources within.
+
+??? question "What role provided the user with the ability to perform the role assignment?"
+
+    ??? tip "Hint"
+        Look at the identity information.
+
+    ??? info "Answer"
+        The `@identity.authorization.evidence.role` field tells us that the User Access Administrator role we previously saw `devindeveloper@pdedatadogoutlook.onmicrosoft.com` escalate to. 
+
+The next event in the sequence is related to serial console access.
+
+Which virtual machine...
+
+
+Run command event intro
+
+What does this event indicate
+Which VM
+What missing context
 
 
 

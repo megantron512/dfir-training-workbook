@@ -745,6 +745,126 @@
     ```    
     While the log references `password`, in the UI we would be adding a `client secret`.
 </code></pre>
+<p>Feel free to look at the final <code>Update application</code> event but it does not provide any additional context that will assist in the investigation. Let's look at the credential that was created next.</p>
+<details class="question">
+<summary>What was the created key used for?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Run a search for the key identifier from the last question present in any field (using <code>*:</code>).</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The key appears as <code>@properties.servicePrincipalCredentialKeyId</code> in the sign-in events that were previously reviewed. </p>
+</details>
+</details>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The below timeline should only be reviewed after completing the previous steps otherwise it will give away answers.</p>
+</div>
+<details class="note">
+<summary>Timeline</summary>
+<p>Based on this information we know the following sequence of events:<br />
+1. <code>devindeveloper@pdedatadogoutlook.onmicrosoft.com</code> updates an application to associate a client secret with <code>DFIR Training - Top Dog Role Management</code>.  <br />
+2. <code>DFIR Training - Top Dog Role Management</code> logs in using the client secret generated in step 1. <br />
+3. <code>DFIR Training - Top Dog Role Management</code> grants <code>devindeveloper@pdedatadogoutlook.onmicrosoft.com</code> global admin role.</p>
+</details>
+<p>The next step from here is to find out what the user did with the newly-granted global admin permissions. Since we see no more activity for the user account when searching for <code>@usr.name</code>, let's once again broaden the search via a wildcard field name search.</p>
+<details class="question">
+<summary>Excluding sign-in activity, what additional results are returned for the user in the broadened search?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Filter by <code>*:devindeveloper@pdedatadogoutlook.onmicrosoft.com</code> and look at unique event names.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The following events have not yet been reviewed:  </p>
+<ul>
+<li><code>User has elevated their access to User Access Administrator for their Azure Resources</code>   </li>
+<li><code>MICROSOFT.AUTHORIZATION/ROLEASSIGNMENTS/WRITE</code>    </li>
+<li><code>MICROSOFT.SERIALCONSOLE/SERIALPORTS/CONNECT/ACTION</code>   </li>
+<li><code>MICROSOFT.COMPUTE/VIRTUALMACHINES/RUNCOMMAND/ACTION</code>    </li>
+<li><code>Admin registered security info</code></li>
+</ul>
+</details>
+</details>
+<p>We'll review events in chronological order to find out what the threat actor did after receiving global admin access. The first event is the access elevation to User Access Administrator.</p>
+<details class="question">
+<summary>How does User Access Administrator differ from Global Admin?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Google or use GenerativeAI to learn about the difference.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>Global admin is an <strong>EntraID role</strong> allowing management of EntraID users, groups, apps, and settings. It does not give access over all subscriptions and resource. User access administrator is an <strong>RBAC role</strong> and allows for viewing resources and assigning access at the subscription/resource level.</p>
+<p>As per <a href="https://learn.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#how-does-elevated-access-work">Microsoft documenation</a>:</p>
+<blockquote>
+<p>Microsoft Entra ID and Azure resources are secured independently from one another. That is, Microsoft Entra role assignments do not grant access to Azure resources, and Azure role assignments do not grant access to Microsoft Entra ID. </p>
+</blockquote>
+</details>
+</details>
+<p>Now let's look at the resource management events to understand interactions with resources in our environment.</p>
+<details class="question">
+<summary>Why are there multiple events for each event type we observed (i.e. what is the key difference the events with the same type)?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the fields in each one and identify a field that changes value and helps determine why there is multiple.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The <code>@evt.outcome</code> field shows us that these logs are indicating various "stages" of the action being taken; for example, <code>Start</code> followed by <code>Success</code>. The <code>Start</code> events show more context, so make sure you review those events specifically for the next set of questions.</p>
+</details>
+</details>
+<details class="question">
+<summary>With regards to the role assignment write event, what role was assigned (not the ID, the role name)?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Use Google to find context around the role definition ID located in the request body.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>A quick Google search should inform you that the ID <code>b24988ac-6180-42a0-ab88-20f7382dd24c</code> is associated with the built-in <code>Contributor</code> role. </p>
+</details>
+</details>
+<details class="question">
+<summary>Which principal/user was the role assigned to?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Take the principal ID from the request body and reference other logs from our investigation to tie that to an identity.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>Other logs show us that <code>1606d62c-71bc-42ff-a03c-87809c6b0e68</code> is the ID associated with the <code>devindeveloper@pdedatadogoutlook.onmicrosoft.com</code> user.</p>
+</details>
+</details>
+<details class="question">
+<summary>What is the scope of the role?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the request body again.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The request body specifies <code>subscriptions/fa3f98d4-2d5c-44ae-950f-ecbb74b5fab6</code> as the scope, meaning that Contributor permissions are granted to the user for the subscription and all resource groups and resources within.</p>
+</details>
+</details>
+<details class="question">
+<summary>What role provided the user with the ability to perform the role assignment?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the identity information.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The <code>@identity.authorization.evidence.role</code> field tells us that the User Access Administrator role we previously saw <code>devindeveloper@pdedatadogoutlook.onmicrosoft.com</code> escalate to. </p>
+</details>
+</details>
+<p>The next event in the sequence is related to serial console access.</p>
+<p>Which virtual machine...</p>
+<p>Run command event intro</p>
+<p>What does this event indicate
+Which VM
+What missing context</p>
 <h2 id="references">References</h2>
 
 
