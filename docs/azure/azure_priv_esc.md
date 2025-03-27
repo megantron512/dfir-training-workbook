@@ -206,15 +206,38 @@ Now let's look at the resource management events to understand interactions with
 
 The next event in the sequence is related to serial console access.
 
-Which virtual machine...
+??? question "Which host did the attacker attempt to connect to the serial port on?"
 
+    ??? tip "Hint"
+       Look at the resource ID that represents a virtual machine.
 
-Run command event intro
+    ??? info "Answer"
+        The `@properties.entity` field indicates that `SpotVM` is the target of the serial port connect action.
 
-What does this event indicate
-Which VM
-What missing context
+The outcome fields in the logs lead us to believe the connection was successful. In reality, however, although the attacker was able to connect to the console, a network error due to network security rules prevented them from being able to actually interact with the host. At this point, it appears they took a different approach.
 
+??? question "What does the presence of a RUNCOMMAND event indicate?"
 
+    ??? tip "Hint"
+       Research via Google or GenAI.
 
-## References
+    ??? info "Answer"
+        This indicates an attempt to run scripts on the virtual machine.
+
+??? question "Which VM was the target of the RUNCOMMAND event?"
+
+    ??? info "Answer"
+        `@resource_name` shows that the threat actor is still targeting the SpotVM host, which makes sense if their serial console usage failed.
+
+??? question "What context is missing and how can we find it?"
+
+    ??? tip "Hint"
+       What unanswered questions do we have in the context of this specific event that does not appear in the event details. Google to understand where that information is.
+
+    ??? info "Answer"
+        We don't know what scripts and commands were run via this action. Those events are not logged due to security reasons. To find that information, we would have to analyze the host that was targted. The following reference can provide more details on finding evidence of command execution: [Azure Run Command for Dummies](https://cloud.google.com/blog/topics/threat-intelligence/azure-run-command-dummies/)
+
+One line of investigation we did not assess is the initial access vector for the user account that ultimately escalated privileges. The simulation for this lab did not include that activtiy and so we can make assumptions that the credentials were phished or something similar. In any other attack we would need to work backwards in time to identify the initial access vector.
+
+# Attack Walkthrough
+These labs were developed by Katie Knowles and she has graciously developed a [write-up](https://datadoghq.atlassian.net/wiki/spaces/~712020c4a4c505c6e144cd9e42314f3e9b4603/pages/4890951947/Attacker+Perspectives+Azure+SP+Attack+Paths) and [video walkthrough](https://drive.google.com/file/d/1lA8VPm6_vwSDOAgJxu9HaSAZPbxS4U11/view?usp=drive_link) from the attacker perspective so you can understand better what actions were taken and why, and what visibility gaps may be present. 
