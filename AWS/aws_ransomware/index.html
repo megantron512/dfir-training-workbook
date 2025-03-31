@@ -1,0 +1,875 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://megantron512.github.io/dfir-training-workbook/AWS/aws_ransomware/">
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../../azure/azure_priv_esc/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.10">
+    
+    
+      
+        <title>Ransomware in AWS - My Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.4af4bdda.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ransomware-in-aws" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="My Docs" class="md-header__button md-logo" aria-label="My Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            My Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Ransomware in AWS
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="My Docs" class="md-nav__button md-logo" aria-label="My Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    My Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Welcome to the Datadog Cloud DFIR Training!
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    AWS
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            AWS
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Ransomware in AWS
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ransomware in AWS
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    <span class="md-ellipsis">
+      Background
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#investigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Investigation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Azure
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Azure
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../azure/azure_priv_esc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Azure Privilege Escalation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Gcp
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Gcp
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gcp/gcp_service_account_abuse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Default Service Account Abuse in Google Cloud
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    <span class="md-ellipsis">
+      Background
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#investigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Investigation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="ransomware-in-aws">Ransomware in AWS</h1>
+<h2 id="background">Background</h2>
+<p>SIRT has received an alert about an <a href="https://github.com/DataDog/threat-detection/blob/main/rules/cloudtrail/aws_resource_encryption_ransomware.tf">external KMS key being used to encrypt resources</a>. For the sake of this lab, no signal was generated, but if it had been, it would have been triggered by <a href="https://app.datadoghq.com/logs?query=account%3A711387092967%20%40eventID%3A38cc2426-7f1d-3218-8a48-7c68f268d485&amp;agg_m=count&amp;agg_m_source=base&amp;agg_t=count&amp;clustering_pattern_field_path=message&amp;cols=host%2Cservice&amp;event=AwAAAZWqoGgQl8191wAAABhBWldxb283U0FBRFlab1hWX2NmUC1nQnMAAAAkMDE5NWFhYTAtN2I5OC00MWYwLWI0ODItNDE5YzIyZDg0NjQ4AABUSQ&amp;fromUser=true&amp;index=cloudtrail&amp;messageDisplay=inline&amp;refresh_mode=paused&amp;storage=hot&amp;stream_sort=desc&amp;viz=stream&amp;from_ts=1742324100000&amp;to_ts=1742325000000&amp;live=false">this GenerateDataKey event</a>.    </p>
+<h3 id="logs">Logs</h3>
+<p>The logs for this lab can be access via this link: <a href="https://app.datadoghq.com/logs?query=account%3A711387092967&amp;agg_m=count&amp;agg_m_source=base&amp;agg_t=count&amp;clustering_pattern_field_path=message&amp;cols=host%2Cservice&amp;fromUser=true&amp;index=cloudtrail&amp;messageDisplay=inline&amp;refresh_mode=paused&amp;storage=hot&amp;stream_sort=desc&amp;viz=stream&amp;from_ts=1742324100000&amp;to_ts=1742325000000&amp;live=false">Ransomware in AWS Logs</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since the sandbox infrastructure was used for lab development, if you do not limit your searches to account ID <code>711387092967</code>, setup activity for attacker resources will appear in the results. Feel free to look at the events to get familiar with different event types, but in the case of a similar incident, these events will not appear as they will be logged in attacker infrastructure.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Due to the testing script used, the benign setup activity has the same IP as the attacker activity, which is unlikely to happen in most cloud attacks. Usually, the IP address would be a useful pivot point.</p>
+</div>
+<h2 id="investigation">Investigation</h2>
+<p>Start by reviewing the triggering event and understanding what is happening. </p>
+<details class="question">
+<summary>What is the attacker doing based on this event?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<ul>
+<li>Search Google or generative AI to understand the <code>GenerateDataKey</code> event.  </li>
+<li>Look at <code>@requestParameters</code> in the <code>GenerateDataKey</code> event for more context.</li>
+</ul>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>This event indicates an attempt to encrypt data in AWS. The request parameters provide the following context:  </p>
+<ul>
+<li>The object that was encrypted is <code>arn:aws:s3:::financial-reports-2025-7449/accounting_data_2025.xml</code>, a file named <code>accounting_data_2025.xml</code> in an S3 bucket called <code>financial-reports-2025-7449</code>.   </li>
+<li>It was encrypted with a KMS key with ARN <code>arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5</code>. </li>
+</ul>
+</details>
+</details>
+<details class="question">
+<summary>What is a notable attribute of the KMS key involved in the encryption?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Review what each part of the ARN represents. Is there anything in the key's ARN that does not match with the context of this event?</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The account ID shown in the ARN (<code>601427279990</code>) is from a different account than the one in which the encryption is occuring. In this particular case, due to testing infrastructure, it is another account within Datadog. The signal logic and what would likely be observed in an attack though is a key outside of Datadog being used. </p>
+</details>
+</details>
+<p>Now that we have reviewed the triggering event, let's look at the bigger picture and find out what other activity is associated with the attacker.</p>
+<details class="question">
+<summary>What indicators can help us track the relevant activity?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Since the IP address is <code>AWS Internal</code> this is not going to help. Fields like account or service are too broad and will capture benign activity. Request and event IDs are going to be unique to this specific event. Consider fields that are unique enough to reduce noise from legitimate users but not too unique to limit to just this event type.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<ul>
+<li>User ARN: <code>arn:aws:iam::711387092967:user/CloudOpsMonitor</code>    </li>
+<li>KMS Key ARN: <code>arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5</code></li>
+</ul>
+</details>
+</details>
+<p>Before broadening our search to all activity from the IAM user, let's first see the full scope of the encryption activities.</p>
+<details class="question">
+<summary>How many files were encrypted? Gather a list of the files.</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Filter by the KMS key ARN: <code>index:cloudtrail account:711387092967 @resources.ARN:"arn:aws:kms:us-east-1:601427279990:key/88ab009c-12da-4b74-95b4-d051924119a5"</code>. Group by <code>@requestParameters.encryptionContext.aws:s3:arn</code> for a quick view of all encrypted resources. Visualize as a table and be mindful of the display limit.  </p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>10 files were encrypted, all in the <code>financial-reports-2025-7449</code> bucket. </p>
+<p><img alt="file_list" src="../images/file_list.png" /></p>
+</details>
+</details>
+<p>We've mentioned in training that not all S3 buckets provide data-level logging, so any write or read operations on the bucket will not be logged. Let's go look at the bucket in the AWS console quick and see if there is anything notable.</p>
+<details class="question">
+<summary>Besides the bad practice of storing seemingly sensitive files, is there anything notable about the files in the bucket?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the most recently modified file.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>After each file is overwritten with an encrypted version of the file (Last Modified timestamps are seconds apart), a <code>RANSOM_NOTE.txt</code> is modified or created. Viewing this file reveals a ransom note that says an AWS KMS key was used to encrypt the other files and that if payment isn't made, the encryption key will be deleted after 7 days.</p>
+</details>
+</details>
+<p>At this point, we've figured out that we were the target of a ransomware attack where an external KMS key was used to encrypt all the files in our bucket. To better understand the sequence of events that led to this, let's broaden our search to include all activity by the <code>CloudOpsMonitor</code> IAM user.</p>
+<details class="question">
+<summary>What other actions did the <code>CloudOpsMonitor</code> IAM user take?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Search based on the username <code>CloudOpsMonitor</code> and group by <code>@evt.name</code>.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>Along with the previously-investigated <code>GenerateDataKey</code> action, the IAM account was also used to perform the following actions:   </p>
+<ul>
+<li><code>DescribeTrails</code>   </li>
+<li><code>StopLogging</code>   </li>
+<li><code>PutUserPolicy</code>   </li>
+<li><code>GetTrailStatus</code>   </li>
+<li><code>ListBuckets</code>    </li>
+<li><code>GetBucketVersioning</code></li>
+<li><code>DescribeKey</code>    </li>
+<li><code>DescribeSnapshots</code>  </li>
+<li><code>CopySnapshot</code>  </li>
+<li><code>GenerateDataKeyWithoutPlaintext</code>  </li>
+<li><code>DeleteSnapshot</code>  </li>
+</ul>
+</details>
+</details>
+<p>Let's look through each of these events to glean some insight into what the attacker was able to do in the environment. The first events are related to CloudTrail logging.</p>
+<details class="question">
+<summary>What did the threat actor try to do with CloudTrail logging? What was the result?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the sequence of events and pay attention to the <code>@level</code> associated with events.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>First the attacker runs <code>DescribeTrails</code>. This would allow them to retrieve a list of CloudTrails that exist in the account. The next request is to stop the logging for one of the CloudTrail's retrieved (<code>security-cloudtrail</code>). This, along with the attempt to get the Trail status after, failed due to a lack of identity-based policies allowing for those actions. This is clearly explained via Datadog in the <code>Error</code> section.</p>
+</details>
+</details>
+<p>Luckily, thanks to our IAM policies, the threat actor was unable to stop logging so we have visibility into the follow-on activities. The other event that occurs around the time of the CloudTrail is <code>PutUserPolicy</code>. </p>
+<details class="question">
+<summary>What is the policy that is applied supposed to do?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the <code>@requestParameters</code> of the event.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The attacker is applying a policy called <code>CloudOpsAdmins</code> to the <code>CloudOpsMonitor</code> user. The <code>@requestParameters.policyDocument</code> field shows us that the policy would allow all actions on all resources for the associated user.</p>
+</details>
+</details>
+<p>Let's move onto the bucket activity we see after the attempts to stop CloudTrail and user policy changes, but before the file encryption.</p>
+<details class="question">
+<summary>How many times was the <code>GetBucketVersioning</code> action taken? How many buckets was the call made against?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Further filter the search to only include <code>@evt.name:GetBucketVersioning</code>. Count the results. Group by the bucket name to see unique count of buckets.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>There are 12 <code>GetBucketVersioning</code> events targeting 6 different buckets.</p>
+</details>
+</details>
+<details class="question">
+<summary>What AWS CLI command was caused these events to be generated?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the user agent.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The user agent ends with <code>command#s3api.get-bucket-versioning</code> indicating the command executed was <code>aws s3api get-bucket-versioning</code>. We do not know if any additional parameters were passed.</p>
+</details>
+</details>
+<details class="question">
+<summary>What information can the attacker find out from running this command? How is it relevant to the threat actor's attack?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look up the documentation for the <code>GetBucketVersioning</code> event or <code>get-bucket-versioning</code> CLI command.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>This command returns the versioning state and MFA Delete status of an S3 bucket. If versioning is enabled, this makes it much more challenging to prevent the victim from being able to recover their files, since applying encryption does not retroactively encrypt old versions of files (it just creates a new version that is encrypted). MFA Delete being enabled prevents the attacker from being able to change versioning settings or permanently delete the old versions of the files without a MFA code.</p>
+</details>
+</details>
+<p>Now we will look at the activity happening after the encrytion activity that we started from. Specifically, we are going to look at the snapshot "write" events.</p>
+<details class="question">
+<summary>How many snapshots were copied? What seems to be the threat actor's intent with these actions</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at API documentation to understand this event. Look at <code>@requestParameters</code> in the events for more context.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>There are 4 snapshots that are copied. The threat actor appears to be attempting to encrypt the snapshots in the account using the same KMS key that was used for encrypting the buckets.</p>
+</details>
+</details>
+<details class="question">
+<summary>Which snapshots were deleted?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Filter to the <code>DeleteSnaphot</code> events and group by <code>@requestParameters.snapshotId</code>.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The following two snapshots are deleted:<br />
+- <code>snap-09336c08a16457168</code><br />
+- <code>snap-0a5c7f52ffd2db5da</code>  </p>
+</details>
+</details>
+<details class="question">
+<summary>What events may explain why 4 snapshots were copied but only 2 were deleted?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at failed events around this timeframe.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>There are two <code>GenerateDataKeyWithoutPlaintext</code> error events. While there are no details on the snapshot the key was being generated for, logic would indicate that two of the snapshots were not able to be copied and encrypted, and thus the originals were not deleted by the threat actor in their destructive actions. </p>
+</details>
+</details>
+<p>Based on what we observed at the start of our investigation, there is something missing from the logs...</p>
+<details class="question">
+<summary>What activity is missing from the logs that we know happened?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Revisit what we found in the bucket when we logged into the console.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The ransom note was created in the bucket but there is no evidence of that upload occurring. If you visit the bucket in the console, look at the <code>Server access logging</code> and <code>AWS CloudTrail data events</code> and you'll see there's no access or data events enabled, meaning we only will see management events. </p>
+<p><em>Note</em>: This information can also be found directly in Datadog via the Resource Catalog based on the <code>logging_enabled</code> key in Resource Info.</p>
+</details>
+</details>
+<p>If those events are missing, maybe there are other events that could be missing too. Let's review the IAM user's permissions to see what other unlogged actions could've occurred.</p>
+<details class="question">
+<summary>What permissions does the user have that would not have been logged if they did occur?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Go to the AWS console and look at the user in IAM.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>There are two policies attached to this user. <code>CloudOpsAdmins</code> is the one we investigated as it was added by the attacker. The only existing policy from before the attack that is attached to this user is <code>CloudOpsS3Access</code>. Along with the observed management plane events, the user had the ability to <code>GetObject</code>, <code>PutObject</code>, or <code>CopyObject</code> in S3. This means that the attacker could have downloaded or copied the data without us having a way to find out. They could have also uploaded additional files elsewhere in the account, which would require a manual audit of each bucket for recent uploads.</p>
+</details>
+</details>
+<p>At this point, we've got a good feel for the flow of the attack. The threat actor did reconnaisance searching for buckets in the account, checked which accounts had versioning/MFA delete enabled, chose a target bucket to encrypt, and left behind a ransom note. We still don't know how the attacker gained access to the IAM account though.</p>
+<details class="question">
+<summary>How did the attacker authenticate in order to perform these actions?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Look at the accessKeyId used for the <code>ListBuckets</code> and <code>GetBucketVersioning</code> events.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The access key ID associated with the user identity is <code>AKIA2LIPZS7T27U6CQ24</code>. As discussed when we broke down <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html">access key ID prefixes</a>, the <code>AKIA</code> prefix indicates an access key is being used.</p>
+</details>
+</details>
+<p>The challenge at this point is there isn't really any evidence of <em>how</em> the attacker got ahold of the access key. Most often threat actors steal keys that are accidentally leaked in code repositories, but it could have also been stolen from a user's laptop or cloud storage. Unless an alert from AWS or Datadog tells us an API key is leaked, the exact source of the leak is not clear. The best we can do is uncover who created the key for this <code>CloudOpsMonitor</code> account and see where the key has been shared. </p>
+<details class="question">
+<summary>Who created the access key that has been compromised?</summary>
+<details class="tip">
+<summary>Hint</summary>
+<p>Search for the event name associated with access key creation that also contains a field (the response elements) with the identified key.</p>
+</details>
+<details class="info">
+<summary>Answer</summary>
+<p>The <code>CreateAccessKey</code> event shows that <code>megan.fonseca@datadoghq.com</code> created the access key for the account.   </p>
+<p><em>Note</em>: In this case the timestamps and IP and user agent align due to how the attack simulation was executed. In a real incident you might need to look further back in the logs to find the access key creation event and it's likely to have less overlap with the attacker behavior.</p>
+</details>
+</details>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>

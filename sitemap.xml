@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://megantron512.github.io/dfir-training-workbook/</loc>
+         <lastmod>2025-03-31</lastmod>
+    </url>
+    <url>
+         <loc>https://megantron512.github.io/dfir-training-workbook/AWS/aws_ransomware/</loc>
+         <lastmod>2025-03-31</lastmod>
+    </url>
+    <url>
+         <loc>https://megantron512.github.io/dfir-training-workbook/azure/azure_priv_esc/</loc>
+         <lastmod>2025-03-31</lastmod>
+    </url>
+    <url>
+         <loc>https://megantron512.github.io/dfir-training-workbook/gcp/gcp_service_account_abuse/</loc>
+         <lastmod>2025-03-31</lastmod>
+    </url>
+</urlset>
